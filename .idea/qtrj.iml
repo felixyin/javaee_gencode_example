@@ -38,11 +38,11 @@
             <entry key="com.zeroturnaround.jrebel.remoting.ModuleRemoteServerSelection" value="off" />
             <entry key="com.zeroturnaround.jrebel.remoting.ModuleSpecificSingleRemoteServer" />
             <entry key="jrebelEnabled" value="true" />
-            <entry key="lastExternalPluginCheckTime" value="1600864119666" />
-            <entry key="savedRebelXmlBuildTool" />
-            <entry key="savedRebelXmlContent" />
+            <entry key="lastExternalPluginCheckTime" value="1606115173137" />
+            <entry key="rebelXmlGenerationType" value="ide" />
           </map>
         </option>
+        <option name="useRelativePathsInXml" value="true" />
       </configuration>
     </facet>
   </component>
@@ -82,7 +82,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.alibaba:jconsole:1.8.0">
         <CLASSES>
-          <root url="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_251.jdk/Contents/Home/lib/jconsole.jar!/" />
+          <root url="jar:///usr/lib/jvm/java-1.8.0-openjdk-amd64/lib/jconsole.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -91,7 +91,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.alibaba:tools:1.8.0">
         <CLASSES>
-          <root url="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_251.jdk/Contents/Home/lib/tools.jar!/" />
+          <root url="jar:///usr/lib/jvm/java-1.8.0-openjdk-amd64/lib/tools.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -199,15 +199,6 @@
       <library name="Maven: org.wltea:analyzer:2012_u6">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/src/main/webapp/WEB-INF/lib/analyzer-2012_u6.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="Maven: gencode:gencode:2.0">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/src/main/webapp/WEB-INF/lib/org.jeeframework.gencode-2.0-tomcat7.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
