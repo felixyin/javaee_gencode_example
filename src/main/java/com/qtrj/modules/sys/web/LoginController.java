@@ -74,6 +74,7 @@ public class LoginController extends BaseController{
 	public String login(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		Principal principal = UserUtils.getPrincipal();
 
+		System.out.println("ok------------------------");
 		if (logger.isDebugEnabled()){
 			logger.debug("login, active session size: {}", sessionDAO.getActiveSessions(false).size());
 		}

@@ -9,13 +9,13 @@
 	<id>qtrj</id>
 
 	<classpath>
-		<dir name="${rebel.projectpath.qtrj}/target/classes">
+		<dir name="/Users/fy/workspace/vstest/javaee_gencode_example/src/main/webapp/WEB-INF/classes">
 		</dir>
 	</classpath>
 
 	<web>
 		<link target="/">
-			<dir name="${rebel.projectpath.qtrj}/src/main/webapp">
+			<dir name="/Users/fy/workspace/vstest/javaee_gencode_example/src/main/webapp">
 			</dir>
 		</link>
 	</web>

@@ -81,6 +81,7 @@
 
     <build>
         <finalName>qtrj</finalName>
+        <outputDirectory>src/main/webapp/WEB-INF/classes</outputDirectory>
         <resources>
 			<resource>
 				<directory>src/main/java</directory>
@@ -90,7 +91,7 @@
 			</resource>
 			<resource>
 				<directory>src/main/resources</directory>
-			</resource>
+            </resource>
 		</resources>
         <plugins>
            
@@ -123,8 +124,11 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.3</version>
                 <configuration>
+                    <skipTests>true</skipTests><!-- 跳过测试 -->
                     <source>1.8</source>
                     <target>1.8</target>
+                    <meminitial>128m</meminitial><!-- 编译器使用的初始内存 -->
+                    <maxmem>512m</maxmem><!-- 编译器使用的最大内存 -->
                 </configuration>
             </plugin>
 <!--            <plugin>-->
