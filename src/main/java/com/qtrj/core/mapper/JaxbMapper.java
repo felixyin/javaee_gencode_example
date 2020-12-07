@@ -27,14 +27,16 @@ import com.qtrj.common.utils.StringUtils;
 /**
  * 使用Jaxb2.0实现XML<->Java Object的Mapper.
  * 
- * 在创建时需要设定所有需要序列化的Root对象的Class.
- * 特别支持Root对象是Collection的情形.
+ * 在创建时需要设定所有需要序列化的Root对象的Class. 特别支持Root对象是Collection的情形.
  * 
  * @author calvin
  * @version 2016-01-15
  */
 @SuppressWarnings("rawtypes")
-public class JaxbMapper {
+public final class JaxbMapper {
+
+	private JaxbMapper() {
+	}
 
 	private static ConcurrentMap<Class, JAXBContext> jaxbContexts = new ConcurrentHashMap<Class, JAXBContext>();
 
@@ -108,8 +110,7 @@ public class JaxbMapper {
 	}
 
 	/**
-	 * 创建Marshaller并设定encoding(可为null).
-	 * 线程不安全，需要每次创建或pooling。
+	 * 创建Marshaller并设定encoding(可为null). 线程不安全，需要每次创建或pooling。
 	 */
 	public static Marshaller createMarshaller(Class clazz, String encoding) {
 		try {
@@ -130,8 +131,7 @@ public class JaxbMapper {
 	}
 
 	/**
-	 * 创建UnMarshaller.
-	 * 线程不安全，需要每次创建或pooling。
+	 * 创建UnMarshaller. 线程不安全，需要每次创建或pooling。
 	 */
 	public static Unmarshaller createUnmarshaller(Class clazz) {
 		try {
@@ -150,8 +150,8 @@ public class JaxbMapper {
 				jaxbContext = JAXBContext.newInstance(clazz, CollectionWrapper.class);
 				jaxbContexts.putIfAbsent(clazz, jaxbContext);
 			} catch (JAXBException ex) {
-				throw new HttpMessageConversionException("Could not instantiate JAXBContext for class [" + clazz
-						+ "]: " + ex.getMessage(), ex);
+				throw new HttpMessageConversionException(
+						"Could not instantiate JAXBContext for class [" + clazz + "]: " + ex.getMessage(), ex);
 			}
 		}
 		return jaxbContext;
@@ -165,5 +165,5 @@ public class JaxbMapper {
 		@XmlAnyElement
 		protected Collection<?> collection;
 	}
-	
+
 }

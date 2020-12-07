@@ -7,5 +7,7 @@
     },
     "java.dependency.packagePresentation": "hierarchical",
     "java.configuration.updateBuildConfiguration": "interactive",
-    "maven.view": "hierarchical"
+    "maven.view": "hierarchical",
+    "java.checkstyle.configuration": "https://raw.githubusercontent.com/zhnlk/ali-checkstyle-xml/master/ali-checkstyle.xml",
+    "files.autoSave": "onFocusChange"
 }
