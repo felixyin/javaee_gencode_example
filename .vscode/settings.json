@@ -6,7 +6,7 @@
         "**/.factorypath": true
     },
     "java.dependency.packagePresentation": "hierarchical",
-    "java.configuration.updateBuildConfiguration": "interactive",
+    "java.configuration.updateBuildConfiguration": "automatic",
     "maven.view": "hierarchical",
     "java.checkstyle.configuration": "https://raw.githubusercontent.com/zhnlk/ali-checkstyle-xml/master/ali-checkstyle.xml",
     "files.autoSave": "onFocusChange"
