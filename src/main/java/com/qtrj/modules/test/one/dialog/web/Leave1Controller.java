@@ -63,7 +63,6 @@ public class Leave1Controller extends BaseController {
 	@RequestMapping(value = {"list", ""})
 	public String list(Leave1 leave1, Model model) {
 		model.addAttribute("leave1", leave1);
-		// System.out.println("s");
 		return "modules/test/one/dialog/leave1List";
 	}
 
