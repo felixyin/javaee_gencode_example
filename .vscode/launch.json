@@ -5,18 +5,18 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "java",
-      "name": "step2 Debug (Attach)",
-      "request": "attach",
-      "hostName": "localhost",
-      "port": 61250
+      "type": "node-terminal",
+      "name": "step1",
+      "request": "launch",
+      "command": "/Library/Java/JavaVirtualMachines/adoptopenjdk-15.jdk/Contents/Home/bin/java -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=localhost:61250 -Djava.util.logging.config.file=/Users/fy/tools/apache-tomcat-9.0.40/conf/logging.properties -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager -Djdk.tls.ephemeralDHKeySize=2048 -Djava.protocol.handler.pkgs=org.apache.catalina.webresources -Dorg.apache.catalina.security.SecurityListener.UMASK=0027 -Dcatalina.base=/Users/fy/tools/apache-tomcat-9.0.40 -Dcatalina.home=/Users/fy/tools/apache-tomcat-9.0.40 -Djava.io.tmpdir=/Users/fy/tools/apache-tomcat-9.0.40/temp -agentpath:/Users/fy/tools/jrebel/lib/libjrebel64.dylib -classpath /Users/fy/tools/apache-tomcat-9.0.40/bin/bootstrap.jar:/Users/fy/tools/apache-tomcat-9.0.40/bin/tomcat-juli.jar org.apache.catalina.startup.Bootstrap start"
     },
     {
-      "type": "node-terminal",
-      "name": "step1 Debug (Launch)",
-      "request": "launch",
-      "cwd": "${workspaceFolder}",
-      "command": "/Library/Java/JavaVirtualMachines/adoptopenjdk-15.jdk/Contents/Home/bin/java -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=localhost:61250 -Djava.util.logging.config.file=/Users/fy/tools/apache-tomcat-9.0.40/conf/logging.properties -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager -Djdk.tls.ephemeralDHKeySize=2048 -Djava.protocol.handler.pkgs=org.apache.catalina.webresources -Dorg.apache.catalina.security.SecurityListener.UMASK=0027 -Dcatalina.base=/Users/fy/tools/apache-tomcat-9.0.40 -Dcatalina.home=/Users/fy/tools/apache-tomcat-9.0.40 -Djava.io.tmpdir=/Users/fy/tools/apache-tomcat-9.0.40/temp -agentpath:/Users/fy/tools/jrebel/lib/libjrebel64.dylib -classpath /Users/fy/tools/apache-tomcat-9.0.40/bin/bootstrap.jar:/Users/fy/tools/apache-tomcat-9.0.40/bin/tomcat-juli.jar org.apache.catalina.startup.Bootstrap start"
+      "type": "java",
+      "name": "step2",
+      "request": "attach",
+      "hostName": "localhost",
+      "port": 61250,
+      "timeout": 300000
     }
   ]
 }
