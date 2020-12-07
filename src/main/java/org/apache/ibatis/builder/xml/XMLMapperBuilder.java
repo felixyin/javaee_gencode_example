@@ -68,8 +68,7 @@ public class XMLMapperBuilder extends BaseBuilder {
 	@Deprecated
 	public XMLMapperBuilder(Reader reader, Configuration configuration,
 			String resource, Map<String, XNode> sqlFragments) {
-		this(new XPathParser(reader, true, configuration.getVariables(),
-				new XMLMapperEntityResolver()), configuration, resource,
+		this(new XPathParser(reader, true, configuration.getVariables()), configuration, resource,
 				sqlFragments);
 	}
 
@@ -83,8 +82,7 @@ public class XMLMapperBuilder extends BaseBuilder {
 	public XMLMapperBuilder(InputStream inputStream,
 			Configuration configuration, String resource,
 			Map<String, XNode> sqlFragments) {
-		this(new XPathParser(inputStream, true, configuration.getVariables(),
-				new XMLMapperEntityResolver()), configuration, resource,
+		this(new XPathParser(inputStream, true, configuration.getVariables()), configuration, resource,
 				sqlFragments);
 	}
 
