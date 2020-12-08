@@ -9,5 +9,7 @@
     "java.configuration.updateBuildConfiguration": "automatic",
     "maven.view": "hierarchical",
     "java.checkstyle.configuration": "https://raw.githubusercontent.com/zhnlk/ali-checkstyle-xml/master/ali-checkstyle.xml",
-    "files.autoSave": "onFocusChange"
+    "files.autoSave": "onFocusChange",
+    "editor.snippetSuggestions": "bottom",
+    "editor.suggest.snippetsPreventQuickSuggestions": false
 }
