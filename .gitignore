@@ -2,3 +2,4 @@
 classes/
 lib/
 *.jar
+.DS_store
