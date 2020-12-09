@@ -15,6 +15,7 @@ import org.springframework.util.IdGenerator;
 
 /**
  * 封装各种生成唯一性ID算法的工具类.
+ * 
  * @author qtrj
  * @version 2016-01-15
  */
@@ -23,16 +24,16 @@ import org.springframework.util.IdGenerator;
 public class IdGen implements IdGenerator, SessionIdGenerator {
 
 	private static SecureRandom random = new SecureRandom();
-	
+
 	/**
 	 * 封装JDK自带的UUID, 通过Random数字生成, 中间无-分割.
 	 */
 	public static String uuid() {
 		return UUID.randomUUID().toString().replaceAll("-", "");
 	}
-	
+
 	/**
-	 * 使用SecureRandom随机生成Long. 
+	 * 使用SecureRandom随机生成Long.
 	 */
 	public static long randomLong() {
 		return Math.abs(random.nextLong());
@@ -51,16 +52,15 @@ public class IdGen implements IdGenerator, SessionIdGenerator {
 	public Serializable generateId(Session session) {
 		return IdGen.uuid();
 	}
-	
+
 	public static void main(String[] args) {
-		for (int i=0; i<1000; i++){
+		for (int i = 0; i < 1000; i++) {
 			System.out.println(IdGen.randomLong() + "  " + IdGen.randomBase62(5));
 		}
 	}
 
 	@Override
 	public UUID generateId() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

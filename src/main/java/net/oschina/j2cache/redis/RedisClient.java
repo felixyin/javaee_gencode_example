@@ -30,17 +30,21 @@ import java.net.URISyntaxException;
 import java.util.*;
 
 /**
- * <p>封装各种模式的 Redis 客户端成统一接口</p>
+ * <p>
+ * 封装各种模式的 Redis 客户端成统一接口
+ * </p>
  *
- * <p>Jedis 接口设计真操蛋</p>
+ * <p>
+ * Jedis 接口设计真操蛋
+ * </p>
  *
  * @author Winter Lau (javayou@gmail.com)
  */
-public class RedisClient implements Closeable, AutoCloseable {
+public class RedisClient implements Closeable {
 
     private final static Logger log = LoggerFactory.getLogger(RedisClient.class);
 
-    private final static int CONNECT_TIMEOUT = 5000;    //Redis连接超时时间
+    private final static int CONNECT_TIMEOUT = 5000; // Redis连接超时时间
     private final static int SO_TIMEOUT = 5000;
     private final static int MAX_ATTEMPTS = 3;
 
@@ -50,7 +54,6 @@ public class RedisClient implements Closeable, AutoCloseable {
     private JedisPool single;
     private JedisSentinelPool sentinel;
     private ShardedJedisPool sharded;
-    private String redisPassword;
 
     /**
      * RedisClient 构造器
@@ -63,73 +66,84 @@ public class RedisClient implements Closeable, AutoCloseable {
         private int database;
         private JedisPoolConfig poolConfig;
 
-        public Builder(){}
+        public Builder() {
+        }
 
-        public Builder mode(String mode){
-            if(mode == null || mode.trim().length() == 0)
+        public Builder mode(String mode) {
+            if (mode == null || mode.trim().length() == 0)
                 this.mode = "single";
             else
                 this.mode = mode;
             return this;
         }
-        public Builder hosts(String hosts){
-            if(hosts == null || hosts.trim().length() == 0)
+
+        public Builder hosts(String hosts) {
+            if (hosts == null || hosts.trim().length() == 0)
                 this.hosts = "127.0.0.1:6379";
             else
                 this.hosts = hosts;
             return this;
         }
-        public Builder password(String password){
-            if(password != null && password.trim().length() > 0)
+
+        public Builder password(String password) {
+            if (password != null && password.trim().length() > 0)
                 this.password = password;
             return this;
         }
+
         public Builder cluster(String cluster) {
-            if(cluster == null || cluster.trim().length() == 0)
+            if (cluster == null || cluster.trim().length() == 0)
                 this.cluster = "j2cache";
             else
                 this.cluster = cluster;
             return this;
         }
-        public Builder database(int database){
+
+        public Builder database(int database) {
             this.database = database;
             return this;
         }
-        public Builder poolConfig(JedisPoolConfig poolConfig){
+
+        public Builder poolConfig(JedisPoolConfig poolConfig) {
             this.poolConfig = poolConfig;
             return this;
         }
+
         public RedisClient newClient() {
             return new RedisClient(mode, hosts, password, cluster, database, poolConfig);
         }
     }
 
-
     /**
      * 各种模式 Redis 客户端的封装
-     * @param mode Redis 服务器运行模式
-     * @param hosts Redis 主机连接信息
-     * @param password  Redis 密码（如果有的话）
-     * @param cluster_name  集群名称
-     * @param database 数据库
-     * @param poolConfig    连接池配置
+     * 
+     * @param mode         Redis 服务器运行模式
+     * @param hosts        Redis 主机连接信息
+     * @param password     Redis 密码（如果有的话）
+     * @param cluster_name 集群名称
+     * @param database     数据库
+     * @param poolConfig   连接池配置
      */
-    private RedisClient(String mode, String hosts, String password, String cluster_name, int database, JedisPoolConfig poolConfig) {
-        this.redisPassword = (password != null && password.trim().length() > 0)? password.trim(): null;
+    private RedisClient(String mode, String hosts, String password, String cluster_name, int database,
+            JedisPoolConfig poolConfig) {
+        // fixme
+        // this.password = (password != null && password.trim().length() > 0) ?
+        // password.trim() : null;
         this.clients = new ThreadLocal<>();
-        switch(mode){
+        switch (mode) {
             case "sentinel":
                 Set<String> nodes = new HashSet<>();
-                for(String node : hosts.split(","))
+                for (String node : hosts.split(","))
                     nodes.add(node);
-                this.sentinel = new JedisSentinelPool(cluster_name, nodes, poolConfig, CONNECT_TIMEOUT, password, database);
+                this.sentinel = new JedisSentinelPool(cluster_name, nodes, poolConfig, CONNECT_TIMEOUT, password,
+                        database);
                 break;
             case "cluster":
                 Set<HostAndPort> hps = new HashSet<>();
-                for(String node : hosts.split(",")){
+                for (String node : hosts.split(",")) {
                     String[] infos = node.split(":");
                     String host = infos[0];
-                    int port = (infos.length > 1)?Integer.parseInt(infos[1]):6379;
+                    int port = (infos.length > 1) ? Integer.parseInt(infos[1]) : 6379;
                     hps.add(new HostAndPort(host, port));
                 }
                 this.cluster = new JedisCluster(hps, CONNECT_TIMEOUT, SO_TIMEOUT, MAX_ATTEMPTS, password, poolConfig);
@@ -137,7 +151,7 @@ public class RedisClient implements Closeable, AutoCloseable {
             case "sharded":
                 List<JedisShardInfo> shards = new ArrayList<>();
                 try {
-                    for(String node : hosts.split(","))
+                    for (String node : hosts.split(","))
                         shards.add(new JedisShardInfo(new URI(node)));
                 } catch (URISyntaxException e) {
                     throw new JedisConnectionException(e);
@@ -145,14 +159,14 @@ public class RedisClient implements Closeable, AutoCloseable {
                 this.sharded = new ShardedJedisPool(poolConfig, shards);
                 break;
             default:
-                for(String node : hosts.split(",")) {
+                for (String node : hosts.split(",")) {
                     String[] infos = node.split(":");
                     String host = infos[0];
-                    int port = (infos.length > 1)?Integer.parseInt(infos[1]):6379;
+                    int port = (infos.length > 1) ? Integer.parseInt(infos[1]) : 6379;
                     this.single = new JedisPool(poolConfig, host, port, CONNECT_TIMEOUT, password, database);
                     break;
                 }
-                if(!"single".equalsIgnoreCase(mode))
+                if (!"single".equalsIgnoreCase(mode))
                     log.warn("Redis mode [" + mode + "] not defined. Using 'single'.");
                 break;
         }
@@ -160,11 +174,12 @@ public class RedisClient implements Closeable, AutoCloseable {
 
     /**
      * 获取客户端接口
+     * 
      * @return 返回基本的 Jedis 二进制命令接口
      */
     public BinaryJedisCommands get() {
         BinaryJedisCommands client = clients.get();
-        if(client == null) {
+        if (client == null) {
             if (single != null)
                 client = single.getResource();
             else if (sentinel != null)
@@ -183,16 +198,15 @@ public class RedisClient implements Closeable, AutoCloseable {
      */
     public void release() {
         BinaryJedisCommands client = clients.get();
-        if(client != null) {
-            //JedisCluster 会自动释放连接
-            if(client instanceof Closeable && !(client instanceof JedisCluster)) {
+        if (client != null) {
+            // JedisCluster 会自动释放连接
+            if (client instanceof Closeable && !(client instanceof JedisCluster)) {
                 try {
                     ((Closeable) client).close();
-                } catch(IOException e) {
+                } catch (IOException e) {
                     log.error("Failed to release jedis connection.", e);
                 }
-            }
-            else
+            } else
                 log.warn("Nothing to do while release redis client.");
             clients.remove();
         }
@@ -200,23 +214,24 @@ public class RedisClient implements Closeable, AutoCloseable {
 
     @Override
     public void close() throws IOException {
-        if(single != null)
+        if (single != null)
             single.close();
-        if(sentinel != null)
+        if (sentinel != null)
             sentinel.close();
-        if(cluster != null)
+        if (cluster != null)
             cluster.close();
-        if(sharded != null)
+        if (sharded != null)
             sharded.close();
     }
 
     /**
      * 为了变态的 jedis 接口设计，搞了五百多行垃圾代码
+     * 
      * @param cluster Jedis 集群实例
      * @return
      */
     private BinaryJedisCommands toBinaryJedisCommands(JedisCluster cluster) {
-        return new BinaryJedisCommands(){
+        return new BinaryJedisCommands() {
             @Override
             public String set(byte[] bytes, byte[] bytes1) {
                 return cluster.set(bytes, bytes1);
@@ -304,7 +319,7 @@ public class RedisClient implements Closeable, AutoCloseable {
 
             @Override
             public byte[] getrange(byte[] bytes, long l, long l1) {
-                return cluster.getrange(bytes,l,l1);
+                return cluster.getrange(bytes, l, l1);
             }
 
             @Override
@@ -634,7 +649,7 @@ public class RedisClient implements Closeable, AutoCloseable {
 
             @Override
             public Set<byte[]> zrangeByScore(byte[] bytes, double v, double v1, int i, int i1) {
-                return cluster.zrangeByScore(bytes, v,v1,i,i1);
+                return cluster.zrangeByScore(bytes, v, v1, i, i1);
             }
 
             @Override
@@ -644,17 +659,17 @@ public class RedisClient implements Closeable, AutoCloseable {
 
             @Override
             public Set<byte[]> zrangeByScore(byte[] bytes, byte[] bytes1, byte[] bytes2, int i, int i1) {
-                return cluster.zrangeByScore(bytes, bytes1, bytes2, i,i1);
+                return cluster.zrangeByScore(bytes, bytes1, bytes2, i, i1);
             }
 
             @Override
             public Set<byte[]> zrevrangeByScore(byte[] bytes, double v, double v1, int i, int i1) {
-                return cluster.zrevrangeByScore(bytes, v,v1,i,i1);
+                return cluster.zrevrangeByScore(bytes, v, v1, i, i1);
             }
 
             @Override
             public Set<Tuple> zrangeByScoreWithScores(byte[] bytes, double v, double v1) {
-                return cluster.zrangeByScoreWithScores(bytes,v,v1);
+                return cluster.zrangeByScoreWithScores(bytes, v, v1);
             }
 
             @Override
@@ -699,7 +714,7 @@ public class RedisClient implements Closeable, AutoCloseable {
 
             @Override
             public Long zremrangeByRank(byte[] bytes, long l, long l1) {
-                return cluster.zremrangeByRank(bytes, l ,l1);
+                return cluster.zremrangeByRank(bytes, l, l1);
             }
 
             @Override
@@ -834,11 +849,12 @@ public class RedisClient implements Closeable, AutoCloseable {
 
             @Override
             public List<GeoRadiusResponse> georadius(byte[] bytes, double v, double v1, double v2, GeoUnit geoUnit) {
-                return cluster.georadius(bytes, v,v1,v2, geoUnit);
+                return cluster.georadius(bytes, v, v1, v2, geoUnit);
             }
 
             @Override
-            public List<GeoRadiusResponse> georadius(byte[] bytes, double v, double v1, double v2, GeoUnit geoUnit, GeoRadiusParam geoRadiusParam) {
+            public List<GeoRadiusResponse> georadius(byte[] bytes, double v, double v1, double v2, GeoUnit geoUnit,
+                    GeoRadiusParam geoRadiusParam) {
                 return cluster.georadius(bytes, v, v1, v2, geoUnit, geoRadiusParam);
             }
 
@@ -848,7 +864,8 @@ public class RedisClient implements Closeable, AutoCloseable {
             }
 
             @Override
-            public List<GeoRadiusResponse> georadiusByMember(byte[] bytes, byte[] bytes1, double v, GeoUnit geoUnit, GeoRadiusParam geoRadiusParam) {
+            public List<GeoRadiusResponse> georadiusByMember(byte[] bytes, byte[] bytes1, double v, GeoUnit geoUnit,
+                    GeoRadiusParam geoRadiusParam) {
                 return cluster.georadiusByMember(bytes, bytes1, v, geoUnit, geoRadiusParam);
             }
 

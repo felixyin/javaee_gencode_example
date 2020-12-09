@@ -25,8 +25,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * <p>EHCache 3.x 的缓存封装</p>
- * <p>该封装类实现了缓存操作以及对缓存数据失效的侦听</p>
+ * <p>
+ * EHCache 3.x 的缓存封装
+ * </p>
+ * <p>
+ * 该封装类实现了缓存操作以及对缓存数据失效的侦听
+ * </p>
  *
  * @author Winter Lau(javayou@gmail.com)
  */
@@ -39,22 +43,21 @@ public class EhCache3 implements Level1Cache, CacheEventListener {
     public EhCache3(String name, org.ehcache.Cache<String, Object> cache, CacheExpiredListener listener) {
         this.name = name;
         this.cache = cache;
-        this.cache.getRuntimeConfiguration().registerCacheEventListener(this,
-                EventOrdering.ORDERED,
-                EventFiring.ASYNCHRONOUS,
-                EventType.EXPIRED);
+        this.cache.getRuntimeConfiguration().registerCacheEventListener(this, EventOrdering.ORDERED,
+                EventFiring.ASYNCHRONOUS, EventType.EXPIRED);
         this.listener = listener;
     }
 
     @Override
     public long ttl() {
-        Duration dur = this.cache.getRuntimeConfiguration().getExpiry().getExpiryForCreation(null,null);
+        Duration dur = this.cache.getRuntimeConfiguration().getExpiry().getExpiryForCreation(null, null);
         return dur.getTimeUnit().toSeconds(dur.getLength());
     }
 
     @Override
     public long size() {
-        return this.cache.getRuntimeConfiguration().getResourcePools().getPoolForResource(ResourceType.Core.HEAP).getSize();
+        return this.cache.getRuntimeConfiguration().getResourcePools().getPoolForResource(ResourceType.Core.HEAP)
+                .getSize();
     }
 
     @Override
@@ -68,7 +71,7 @@ public class EhCache3 implements Level1Cache, CacheEventListener {
     }
 
     @Override
-    public Map get(Collection<String> keys) {
+    public Map<String, Object> get(Collection<String> keys) {
         return cache.getAll(keys.stream().collect(Collectors.toSet()));
     }
 
@@ -88,7 +91,7 @@ public class EhCache3 implements Level1Cache, CacheEventListener {
     }
 
     @Override
-    public void evict(String...keys) {
+    public void evict(String... keys) {
         this.cache.removeAll(Arrays.stream(keys).collect(Collectors.toSet()));
     }
 
@@ -99,8 +102,8 @@ public class EhCache3 implements Level1Cache, CacheEventListener {
 
     @Override
     public void onEvent(CacheEvent cacheEvent) {
-        if(cacheEvent.getType() == EventType.EXPIRED){
-            this.listener.notifyElementExpired(name, (String)cacheEvent.getKey());
+        if (cacheEvent.getType() == EventType.EXPIRED) {
+            this.listener.notifyElementExpired(name, (String) cacheEvent.getKey());
         }
     }
 }

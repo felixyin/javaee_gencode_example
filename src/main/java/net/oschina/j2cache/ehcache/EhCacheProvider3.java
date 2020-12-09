@@ -66,21 +66,23 @@ public class EhCacheProvider3 implements CacheProvider {
     @Override
     public Collection<CacheChannel.Region> regions() {
         Collection<CacheChannel.Region> regions = new ArrayList<>();
-        caches.forEach((k,c) -> regions.add(new CacheChannel.Region(k, c.size(), c.ttl())));
+        caches.forEach((k, c) -> regions.add(new CacheChannel.Region(k, c.size(), c.ttl())));
         return regions;
     }
 
     @Override
     public EhCache3 buildCache(String region, CacheExpiredListener listener) {
         EhCache3 ehcache = caches.get(region);
-        if(ehcache == null){
-            synchronized(EhCacheProvider3.class){
+        if (ehcache == null) {
+            synchronized (EhCacheProvider3.class) {
                 ehcache = caches.get(region);
-                if(ehcache == null){
+                if (ehcache == null) {
                     org.ehcache.Cache cache = manager.getCache(region, String.class, Serializable.class);
                     if (cache == null) {
-                        CacheConfiguration defaultCacheConfig = manager.getRuntimeConfiguration().getCacheConfigurations().get(DEFAULT_TPL);
-                        CacheConfiguration<String, Serializable> cacheCfg = CacheConfigurationBuilder.newCacheConfigurationBuilder(defaultCacheConfig).build();
+                        CacheConfiguration defaultCacheConfig = manager.getRuntimeConfiguration()
+                                .getCacheConfigurations().get(DEFAULT_TPL);
+                        CacheConfiguration<String, Serializable> cacheCfg = CacheConfigurationBuilder
+                                .newCacheConfigurationBuilder(defaultCacheConfig).build();
                         cache = manager.createCache(region, cacheCfg);
                         log.info("Could not find configuration [" + region + "]; using defaults.");
                     }
@@ -98,21 +100,23 @@ public class EhCacheProvider3 implements CacheProvider {
         if (ehcache == null) {
             synchronized (EhCacheProvider3.class) {
                 ehcache = caches.get(region);
-                if(ehcache == null) {
-                    //配置缓存
-                    CacheConfiguration<String, Object> conf = CacheConfigurationBuilder.newCacheConfigurationBuilder(
-                            String.class, Object.class, ResourcePoolsBuilder.heap(defaultHeapSize))
-                            .withExpiry(Expirations.timeToLiveExpiration(Duration.of(timeToLiveInSeconds, TimeUnit.SECONDS)))
+                if (ehcache == null) {
+                    // 配置缓存
+                    CacheConfiguration<String, Object> conf = CacheConfigurationBuilder
+                            .newCacheConfigurationBuilder(String.class, Object.class,
+                                    ResourcePoolsBuilder.heap(defaultHeapSize))
+                            .withExpiry(Expirations
+                                    .timeToLiveExpiration(Duration.of(timeToLiveInSeconds, TimeUnit.SECONDS)))
                             .build();
-                    org.ehcache.Cache cache = manager.createCache(region, conf);
+                    org.ehcache.Cache<String, Object> cache = manager.createCache(region, conf);
                     ehcache = new EhCache3(region, cache, listener);
                     caches.put(region, ehcache);
                     log.info(String.format("Started Ehcache region [%s] with TTL: %d", region, timeToLiveInSeconds));
                 }
             }
-        }
-        else if (ehcache.ttl() != timeToLiveInSeconds)
-            throw new IllegalArgumentException(String.format("Region [%s] TTL %d not match with %d", region, ehcache.ttl(), timeToLiveInSeconds));
+        } else if (ehcache.ttl() != timeToLiveInSeconds)
+            throw new IllegalArgumentException(
+                    String.format("Region [%s] TTL %d not match with %d", region, ehcache.ttl(), timeToLiveInSeconds));
 
         return ehcache;
     }
@@ -122,11 +126,12 @@ public class EhCacheProvider3 implements CacheProvider {
         String sDefaultHeapSize = props.getProperty("defaultHeapSize");
         try {
             this.defaultHeapSize = Long.parseLong(sDefaultHeapSize);
-        }catch(Exception e) {
-            log.warn(String.format("Failed to read ehcache3.defaultHeapSize = %s , use default %d", sDefaultHeapSize, defaultHeapSize));
+        } catch (Exception e) {
+            log.warn(String.format("Failed to read ehcache3.defaultHeapSize = %s , use default %d", sDefaultHeapSize,
+                    defaultHeapSize));
         }
         String configXml = props.getProperty("configXml");
-        if(configXml == null || configXml.trim().length() == 0)
+        if (configXml == null || configXml.trim().length() == 0)
             configXml = "/j2cache/ehcache3.xml";
         URL myUrl = getClass().getResource(configXml);
         Configuration xmlConfig = new XmlConfiguration(myUrl);

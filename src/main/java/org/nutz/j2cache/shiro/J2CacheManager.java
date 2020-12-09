@@ -4,7 +4,6 @@ import org.apache.shiro.ShiroException;
 import org.apache.shiro.cache.AbstractCacheManager;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
-import org.apache.shiro.util.Destroyable;
 import org.apache.shiro.util.Initializable;
 
 import net.oschina.j2cache.CacheChannel;
@@ -12,11 +11,12 @@ import net.oschina.j2cache.J2Cache;
 
 /**
  * 适配Shiro的CacheManager
+ * 
  * @author wendal
  *
  */
-public class J2CacheManager extends AbstractCacheManager implements Initializable, Destroyable {
-	
+public class J2CacheManager extends AbstractCacheManager implements Initializable {
+
 	protected CacheChannel channel;
 
 	public void init() throws ShiroException {
