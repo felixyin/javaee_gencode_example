@@ -26,7 +26,7 @@ public class UserfilesDownloadServlet extends HttpServlet {
 			throws ServletException, IOException {
 		String filepath = req.getRequestURI();
 		int index = filepath.indexOf(Global.USERFILES_BASE_URL);
-		if(index >= 0) {
+		if (index >= 0) {
 			filepath = filepath.substring(index + Global.USERFILES_BASE_URL.length());
 		}
 		try {
@@ -36,30 +36,29 @@ public class UserfilesDownloadServlet extends HttpServlet {
 		}
 
 		File file = new File(Global.getUserfilesBaseDir() + Global.USERFILES_BASE_URL + filepath);
-		//此处修改为断点续传模式，实现视频分段解析，解决视频加载缓慢及微信解析异常问题
-		try{
-			downRangeFile(file,resp,req);
-		}catch (Exception e){
+		// 此处修改为断点续传模式，实现视频分段解析，解决视频加载缓慢及微信解析异常问题
+		try {
+			downRangeFile(file, resp, req);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 	}
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		fileOutputStream(req, resp);
 	}
 
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		fileOutputStream(req, resp);
 	}
 
-	public void downRangeFile(File downloadFile, HttpServletResponse response, HttpServletRequest request) throws Exception {
+	public void downRangeFile(File downloadFile, HttpServletResponse response, HttpServletRequest request)
+			throws Exception {
 
-		String extName = "";
+		// String extName = "";
 		// 文件不存在
 		if (!downloadFile.exists()) {
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -81,8 +80,8 @@ public class UserfilesDownloadServlet extends HttpServlet {
 		String range = request.getHeader("Range");
 		int responseStatus = 206;
 		if (range != null && range.trim().length() > 0 && !"null".equals(range)) {// 客户端请求的下载的文件块的开始字节
-			responseStatus =HttpServletResponse.SC_PARTIAL_CONTENT;
-//			logger.info("request.getHeader(\"Range\")=" + range);
+			responseStatus = HttpServletResponse.SC_PARTIAL_CONTENT;
+			// logger.info("request.getHeader(\"Range\")=" + range);
 			rangeBytes = range.replaceAll("bytes=", "");
 			if (rangeBytes.endsWith("-")) {// bytes=969998336-
 				rangeSwitch = 1;
@@ -122,20 +121,17 @@ public class UserfilesDownloadServlet extends HttpServlet {
 			// 不是从最开始下载，断点下载响应号为206
 			// 响应的格式是:
 			// Content-Range: bytes [文件块的开始字节]-[文件的总大小 - 1]/[文件的总大小]
-//			logger.info("----------------------------片段下载，服务器即将开始断点续传...");
+			// logger.info("----------------------------片段下载，服务器即将开始断点续传...");
 			switch (rangeSwitch) {
 				case 1: {// 针对 bytes=27000- 的请求
-					String contentRange = new StringBuffer("bytes ")
-							.append(new Long(pastLength).toString()).append("-")
-							.append(new Long(fileLength - 1).toString())
-							.append("/").append(new Long(fileLength).toString())
-							.toString();
+					String contentRange = new StringBuffer("bytes ").append(new Long(pastLength).toString()).append("-")
+							.append(new Long(fileLength - 1).toString()).append("/")
+							.append(new Long(fileLength).toString()).toString();
 					response.setHeader("Content-Range", contentRange);
 					break;
 				}
 				case 2: {// 针对 bytes=27000-39000 的请求
-					String contentRange = range.replace("=", " ") + "/"
-							+ new Long(fileLength).toString();
+					String contentRange = range.replace("=", " ") + "/" + new Long(fileLength).toString();
 					response.setHeader("Content-Range", contentRange);
 					break;
 				}
@@ -144,27 +140,27 @@ public class UserfilesDownloadServlet extends HttpServlet {
 				}
 			}
 		} else {
-			String contentRange = new StringBuffer("bytes ").append("0-")
-					.append(fileLength - 1).append("/").append(fileLength)
-					.toString();
+			String contentRange = new StringBuffer("bytes ").append("0-").append(fileLength - 1).append("/")
+					.append(fileLength).toString();
 			response.setHeader("Content-Range", contentRange);
 			// 是从开始下载
-//			logger.info("----------------------------是从开始到最后完整下载！");
+			// logger.info("----------------------------是从开始到最后完整下载！");
 		}
 
 		try {
 			// /////////////////////////设置文件Content-Type///////////////////////////
 			String finalFileName = null;
-			//获得浏览器代理信息
+			// 获得浏览器代理信息
 			final String userAgent = request.getHeader("USER-AGENT");
-			if(StringUtils.contains(userAgent, "MSIE")||StringUtils.contains(userAgent,"Trident")||StringUtils.contains(userAgent,"Edge")){//IE浏览器
-				finalFileName = URLEncoder.encode(downloadFile.getName(),"UTF8");
-			}else if(StringUtils.contains(userAgent, "Mozilla")){//google,火狐浏览器
+			if (StringUtils.contains(userAgent, "MSIE") || StringUtils.contains(userAgent, "Trident")
+					|| StringUtils.contains(userAgent, "Edge")) {// IE浏览器
+				finalFileName = URLEncoder.encode(downloadFile.getName(), "UTF8");
+			} else if (StringUtils.contains(userAgent, "Mozilla")) {// google,火狐浏览器
 				finalFileName = new String(downloadFile.getName().getBytes("GBK"), "iso8859-1");
-			}else{
-				finalFileName = URLEncoder.encode(downloadFile.getName(),"UTF8");//其他浏览器
+			} else {
+				finalFileName = URLEncoder.encode(downloadFile.getName(), "UTF8");// 其他浏览器
 			}
-			response.setHeader("Content-Disposition" ,"attachment;filename=" +finalFileName+"");//下载文件的名称
+			response.setHeader("Content-Disposition", "attachment;filename=" + finalFileName + "");// 下载文件的名称
 			response.setHeader("Content-Length", String.valueOf(contentLength));
 			os = response.getOutputStream();
 			out = new BufferedOutputStream(os);
@@ -210,16 +206,14 @@ public class UserfilesDownloadServlet extends HttpServlet {
 						break;
 					}
 				}
-//				logger.info("Content-Length为：" + contentLength + "；实际输出字节数：" + outLength);
+				// logger.info("Content-Length为：" + contentLength + "；实际输出字节数：" + outLength);
 				out.flush();
 			} catch (IOException ie) {
 				/**
-				 * 在写数据的时候， 对于 ClientAbortException 之类的异常，
-				 * 是因为客户端取消了下载，而服务器端继续向浏览器写入数据时， 抛出这个异常，这个是正常的。
-				 * 尤其是对于迅雷这种吸血的客户端软件， 明明已经有一个线程在读取 bytes=1275856879-1275877358，
+				 * 在写数据的时候， 对于 ClientAbortException 之类的异常， 是因为客户端取消了下载，而服务器端继续向浏览器写入数据时，
+				 * 抛出这个异常，这个是正常的。 尤其是对于迅雷这种吸血的客户端软件， 明明已经有一个线程在读取 bytes=1275856879-1275877358，
 				 * 如果短时间内没有读取完毕，迅雷会再启第二个、第三个。。。线程来读取相同的字节段， 直到有一个线程读取完毕，迅雷会 KILL
-				 * 掉其他正在下载同一字节段的线程， 强行中止字节读出，造成服务器抛 ClientAbortException。
-				 * 所以，我们忽略这种异常
+				 * 掉其他正在下载同一字节段的线程， 强行中止字节读出，造成服务器抛 ClientAbortException。 所以，我们忽略这种异常
 				 */
 				// ignore
 			}

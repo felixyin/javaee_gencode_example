@@ -84,7 +84,8 @@ public class Global {
 	 * @return
 	 */
 	public static String getShareBaseUrl() {
-		SystemAuthorizingRealm.Principal principal = (SystemAuthorizingRealm.Principal) UserUtils.getPrincipal();
+		// SystemAuthorizingRealm.Principal principal =
+		// (SystemAuthorizingRealm.Principal) UserUtils.getPrincipal();
 		return Servlets.getRequest().getContextPath() + Global.USERFILES_BASE_URL + "/共享文档/";
 	}
 
