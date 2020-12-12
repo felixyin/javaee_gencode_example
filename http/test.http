@@ -1,0 +1,7 @@
+get http://www.baidu.com
+Accept-Language: zh-CN
+Accept-Charset: utf-8
+Accept-Encoding: utf-8
+Content-Type: application/xhtml+xml
+
+
